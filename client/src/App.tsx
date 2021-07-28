@@ -1,12 +1,17 @@
-import React from "react";
+import React, {useEffect} from "react";
+import { useSelector, useDispatch } from "react-redux";
 import logo from "./logo.svg";
 import "./App.css";
 
 function App() {
   const [data, setData] = React.useState(null);
+  const counter = useSelector((state) => state);
+  const dispatch = useDispatch();
 
-  React.useEffect(() => {
-    fetch("/api")
+  console.log(counter);
+
+useEffect(() => {
+    fetch("/users")
       .then((res) => res.json())
       .then((data) => setData(data.message));
   }, []);
