@@ -1,25 +1,45 @@
-// server/index.js
+let express = require('express');
+let mongoose = require('mongoose');
+let cors = require('cors');
+let bodyParser = require('body-parser');
 
-const express = require("express");
-const path = require('path');
+// Express Route
+const userRoute = require('./routes/user.route')
 
-const PORT = process.env.PORT || 3001;
+// Connecting mongoDB Database
+mongoose.Promise = global.Promise;
+mongoose.connect("mongodb://localhost/api", {
+  useNewUrlParser: true
+}).then(() => {
+  console.log('Database sucessfully connected!')
+},
+  error => {
+    console.log('Could not connect to database : ' + error)
+  }
+)
 
 const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(cors());
+app.use('/users', userRoute)
 
-// Have Node serve the files for our built React app
-app.use(express.static(path.resolve(__dirname, '../client/build')));
 
-// Handle GET requests to /api route
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
-});
+// PORT
+const port = process.env.PORT || 4000;
+const server = app.listen(port, () => {
+  console.log('Connected to port ' + port)
+})
 
-// All other GET requests not handled before will return our React app
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
-});
+// // 404 Error
+// app.use((req, res, next) => {
+//   next(createError(404));
+// });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+app.use(function (err, req, res, next) {
+  console.error(err.message);
+  if (!err.statusCode) err.statusCode = 500;
+  res.status(err.statusCode).send(err.message);
 });

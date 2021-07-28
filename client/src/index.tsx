@@ -3,11 +3,21 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ConnectedRouter } from "connected-react-router";
+import { Provider } from "react-redux";
+import configureStore, { history } from "./redux/store";
+import { BrowserRouter } from "react-router-dom";
+
+const store = configureStore(/* provide initial state if any */);
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <BrowserRouter>
+        <Provider store={store}>
+            <ConnectedRouter history={history}>
+                <App />
+            </ConnectedRouter>
+        </Provider>
+    </BrowserRouter>,
   document.getElementById('root')
 );
 
