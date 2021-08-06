@@ -2,9 +2,12 @@ let express = require('express');
 let mongoose = require('mongoose');
 let cors = require('cors');
 let bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+require('dotenv').config();
+const jwtSecret = process.env.TOKEN_SECRET;
 
 // Express Route
-const userRoute = require('./routes/user.route')
+const authRoutes = require('./routes/user.route')
 
 // Connecting mongoDB Database
 mongoose.Promise = global.Promise;
@@ -23,8 +26,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+app.use(cookieParser(jwtSecret));
 app.use(cors());
-app.use('/users', userRoute)
+app.use('/api', authRoutes);
 
 
 // PORT
