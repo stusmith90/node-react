@@ -114,6 +114,7 @@ exports.checkUser = catchAsync(async(req, res, next) => {
       const token = req.cookies.jwt;
       const decoded = await promisify(jwt.verify)(token, process.env.TOKEN_SECRET);
       currentUser = await User.findById(decoded.id);
+      currentUser.password = undefined;
     } else {
       currentUser =  null;
     }    
